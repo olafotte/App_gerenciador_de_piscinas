@@ -1,0 +1,77 @@
+{
+  "summary": {
+    "ph_low": "O pH está abaixo da faixa ideal. Isso pode causar irritação na pele e diminuir a eficiência do desinfetante.",
+    "ph_high": "O pH está acima da faixa ideal. Isso pode deixar a água turva, causar incrustações e reduzir a eficácia do cloro.",
+    "ph_ok": "O pH está dentro da faixa recomendada. Continue monitorando regularmente.",
+    "cloro_low": "O cloro livre está baixo. O nível de desinfecção pode não ser suficiente para eliminar bactérias e algas.",
+    "cloro_high": "O cloro está alto. Isso pode causar odor forte, irritação ocular e desconforto na pele.",
+    "cloro_ok": "O cloro está estável dentro da faixa de segurança. Mantenha a dosagem sob controle.",
+    "generator_ready": "Com salinidade correta, seu gerador EasyClor G4 da Nautilus pode gerar cerca de 25g de cloro por hora em 100% de potência.",
+    "generator_saline_issue": "A baixa salinidade impede que o gerador EasyClor G4 opere com eficiência. Ajuste a salinidade antes de aumentar a geração.",
+    "alcalinidade_low": "A alcalinidade está baixa. A água pode ficar instável e o pH pode variar com facilidade.",
+    "alcalinidade_high": "A alcalinidade está alta. Ajustar o pH pode ficar mais difícil e o risco de turvação aumenta.",
+    "alcalinidade_ok": "A alcalinidade está adequada. Isso ajuda a manter o pH estável.",
+    "salinidade_low": "A salinidade está baixa. Pode ser necessário adicionar sal para manter o sistema de eletrólise funcionando.",
+    "salinidade_high": "A salinidade está alta. Pode causar desgaste nas partes metálicas e gerar água desconfortável.",
+    "salinidade_ok": "A salinidade está dentro do intervalo ideal para uma piscina com sistema salino.",
+    "dureza_low": "A dureza está baixa. A água pode ficar corrosiva e danificar superfícies metálicas.",
+    "dureza_high": "A dureza está alta. Pode provocar incrustações e turvação na água.",
+    "dureza_ok": "A dureza está equilibrada. Isso ajuda a proteger a tubulação e os equipamentos.",
+    "overall_ok": "A piscina está em boas condições gerais. Continue mantendo as medições regulares."
+  },
+  "recommendations": {
+    "ph_low": [
+      "Adicione um regulador alcalino ou um aumento de pH de acordo com as instruções do fabricante.",
+      "Reavalie o pH após 4 horas e registre novamente."
+    ],
+    "ph_high": [
+      "Adicione redutor de pH para diminuir gradualmente o valor.",
+      "Agite bem a água após a aplicação e verifique novamente no dia seguinte."
+    ],
+    "cloro_low": [
+      "Aplique cloro granulado ou líquido para subir o nível de desinfetante.",
+      "Evite banhos imediatos até que o valor de cloro esteja dentro da faixa segura."
+    ],
+    "generator_low_chlorine": [
+      "Se a salinidade estiver correta, regule o gerador EasyClor G4 para 100% e deixe-o operar por 60 minutos para gerar cerca de 25g de cloro.",
+      "Mantenha o nível de sal correto para que o gerador de cloro funcione de forma eficiente."
+    ],
+    "generator_salinity_low": [
+      "Corrija a salinidade primeiro, pois o gerador EasyClor G4 não gera cloro corretamente com salinidade baixa.",
+      "Após ajustar a salinidade, aguarde o tempo de geração e meça o cloro novamente."
+    ],
+    "generator_ok": [
+      "O gerador EasyClor G4 está pronto para uso em modo de manutenção se os níveis de salinidade e cloro estiverem corretos.",
+      "Em manutenção, você pode usar menores níveis de geração (20%-40%) para manter o cloro se a piscina estiver estável."
+    ],
+    "cloro_high": [
+      "Deixe a piscina aberta ao sol para dissipar o excesso de cloro.",
+      "Se necessário, use um neutralizante de cloro seguindo as instruções do produto.",
+      "Coloque o gerador EasyClor G4 na potência de zero para evitar gerar mais cloro até que os níveis se estabilizem."
+    ],
+    "alcalinidade_low": [
+      "Aplique um elevador de alcalinidade para estabilizar a água.",
+      "Evite corrigir o pH antes de ajustar a alcalinidade."
+    ],
+    "alcalinidade_high": [
+      "Use um redutor de alcalinidade para aproximar o valor do ideal.",
+      "Verifique o pH depois de estabilizar a alcalinidade."
+    ],
+    "salinidade_low": [
+      "Adicione sal próprio para piscinas até alcançar a faixa recomendada.",
+      "Monitore o nível de salinidade a cada 2 a 3 dias."
+    ],
+    "salinidade_high": [
+      "Dilua a piscina com água fresca para reduzir a salinidade.",
+      "Verifique equipamentos de metal após a correção."
+    ],
+    "dureza_low": [
+      "Adicione um endurecedor de água para proteger superfícies e equipamentos.",
+      "Faça a manutenção preventiva para evitar corrosão."
+    ],
+    "dureza_high": [
+      "Use um sequestrante de cálcio para reduzir o risco de incrustações.",
+      "Considere parte da água da piscina para ajustar o nível de dureza."
+    ]
+  }
+}

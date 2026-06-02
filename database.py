@@ -5,6 +5,15 @@ import os
 
 DB_NAME = "piscina_data.db"
 
+def get_connection():
+    url = os.getenv("TURSO_DATABASE_URL")
+    auth_token = os.getenv("TURSO_AUTH_TOKEN")
+    if url and auth_token:
+        from libsql import connect
+        return connect(url, auth_token=auth_token)
+    else:
+        return sqlite3.connect(DB_NAME)
+
 def _hash_password(password, salt=None):
     if salt is None:
         salt = os.urandom(16)
@@ -12,7 +21,7 @@ def _hash_password(password, salt=None):
     return salt, pwd_hash
 
 def init_db():
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cursor = conn.cursor()
     
     # Tabela para usuários
@@ -65,19 +74,22 @@ def init_db():
 
 def create_user(username, password):
     try:
-        conn = sqlite3.connect(DB_NAME)
+        conn = get_connection()
         cursor = conn.cursor()
         salt, pwd_hash = _hash_password(password)
         cursor.execute('INSERT INTO users (username, salt, password_hash) VALUES (?, ?, ?)', (username, salt, pwd_hash))
         conn.commit()
         user_id = cursor.lastrowid
+        if not user_id:
+            cursor.execute('SELECT last_insert_rowid()')
+            user_id = cursor.fetchone()[0]
         conn.close()
         return user_id
     except sqlite3.IntegrityError:
         return None # Username already exists
 
 def verify_user(username, password):
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT id, salt, password_hash FROM users WHERE username = ?', (username,))
     row = cursor.fetchone()
@@ -90,16 +102,19 @@ def verify_user(username, password):
     return None
 
 def create_pool(user_id, name, volume):
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('INSERT INTO pools (user_id, name, volume) VALUES (?, ?, ?)', (user_id, name, volume))
     conn.commit()
     pool_id = cursor.lastrowid
+    if not pool_id:
+        cursor.execute('SELECT last_insert_rowid()')
+        pool_id = cursor.fetchone()[0]
     conn.close()
     return pool_id
 
 def get_pools(user_id):
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT id, name, volume FROM pools WHERE user_id = ?', (user_id,))
     pools = cursor.fetchall()
@@ -107,7 +122,7 @@ def get_pools(user_id):
     return [{'id': p[0], 'name': p[1], 'volume': p[2]} for p in pools]
 
 def salvar_medicao(pool_id, responsavel, ph, cloro, generator_level, alcalinidade, dureza, salinidade):
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cursor = conn.cursor()
     data_hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     cursor.execute('''
@@ -118,7 +133,7 @@ def salvar_medicao(pool_id, responsavel, ph, cloro, generator_level, alcalinidad
     conn.close()
 
 def ler_historico(pool_id):
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT id, data_hora, responsavel, ph, cloro, generator_level, alcalinidade, dureza, salinidade FROM medicoes WHERE pool_id = ? ORDER BY data_hora DESC', (pool_id,))
     dados = cursor.fetchall()
@@ -126,7 +141,7 @@ def ler_historico(pool_id):
     return dados
 
 def atualizar_medicao(id, data_hora, responsavel, ph, cloro, generator_level, alcalinidade, dureza, salinidade):
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('''
         UPDATE medicoes 
@@ -137,14 +152,14 @@ def atualizar_medicao(id, data_hora, responsavel, ph, cloro, generator_level, al
     conn.close()
 
 def deletar_medicao(id):
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('DELETE FROM medicoes WHERE id = ?', (id,))
     conn.commit()
     conn.close()
 
 def verify_password_by_id(user_id, password):
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('SELECT salt, password_hash FROM users WHERE id = ?', (user_id,))
     row = cursor.fetchone()
@@ -156,7 +171,7 @@ def verify_password_by_id(user_id, password):
     return False
 
 def deletar_piscina(pool_id):
-    conn = sqlite3.connect(DB_NAME)
+    conn = get_connection()
     cursor = conn.cursor()
     cursor.execute('DELETE FROM medicoes WHERE pool_id = ?', (pool_id,))
     cursor.execute('DELETE FROM pools WHERE id = ?', (pool_id,))

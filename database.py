@@ -5,25 +5,22 @@ import os
 
 DB_NAME = "piscina_data.db"
 
+
 def get_connection():
     url = os.getenv("TURSO_DATABASE_URL")
     auth_token = os.getenv("TURSO_AUTH_TOKEN")
     if url and auth_token:
-        from libsql import connect
-        return connect(url, auth_token=auth_token)
-    else:
-        return sqlite3.connect(DB_NAME)
+        try:
+            from libsql import connect
+            return connect(url, auth_token=auth_token)
+        except Exception as exc:
+            print(f"Remote database unavailable, falling back to local SQLite: {exc}")
+    return sqlite3.connect(DB_NAME)
 
-def _hash_password(password, salt=None):
-    if salt is None:
-        salt = os.urandom(16)
-    pwd_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
-    return salt, pwd_hash
 
-def init_db():
-    conn = get_connection()
+def _create_schema(conn):
     cursor = conn.cursor()
-    
+
     # Tabela para usuários
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
@@ -33,7 +30,7 @@ def init_db():
             password_hash BLOB NOT NULL
         )
     ''')
-    
+
     # Tabela para piscinas
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS pools (
@@ -61,16 +58,39 @@ def init_db():
             FOREIGN KEY (pool_id) REFERENCES pools(id)
         )
     ''')
-    
+
     cursor.execute("PRAGMA table_info(medicoes)")
     columns = [row[1] for row in cursor.fetchall()]
     if "generator_level" not in columns:
         cursor.execute("ALTER TABLE medicoes ADD COLUMN generator_level INTEGER DEFAULT 0")
     if "pool_id" not in columns:
         cursor.execute("ALTER TABLE medicoes ADD COLUMN pool_id INTEGER")
-        
+
     conn.commit()
-    conn.close()
+
+def _hash_password(password, salt=None):
+    if salt is None:
+        salt = os.urandom(16)
+    pwd_hash = hashlib.pbkdf2_hmac('sha256', password.encode('utf-8'), salt, 100000)
+    return salt, pwd_hash
+
+def init_db():
+    conn = None
+    try:
+        conn = get_connection()
+        _create_schema(conn)
+    except Exception as exc:
+        print(f"Database initialization failed, retrying with local SQLite: {exc}")
+        if conn is not None:
+            try:
+                conn.close()
+            except Exception:
+                pass
+        conn = sqlite3.connect(DB_NAME)
+        _create_schema(conn)
+    finally:
+        if conn is not None:
+            conn.close()
 
 def create_user(username, password):
     try:
